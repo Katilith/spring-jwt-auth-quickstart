@@ -1,6 +1,6 @@
 # Sprint Boot JWT Authentication Quickstart
 
-A simple Java & Spring Boot application with user signup, signin, signup, JWT session management, and authenticated route support.
+A simple Java & Spring Boot application with user signup, signin, signup, JWT session management, and authenticated route support. MySQL, Hibernate, and Spring Data JPA are included for basic user database creation and management.
 
 ## Routes
 
