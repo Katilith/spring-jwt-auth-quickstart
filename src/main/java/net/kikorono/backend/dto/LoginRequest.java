@@ -2,6 +2,10 @@ package net.kikorono.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * A basic login request DTO (data-transfer-object).
+ * Contains a username and a password.
+ */
 public class LoginRequest {
     @NotBlank
     private String username;

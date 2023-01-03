@@ -1,5 +1,8 @@
 package net.kikorono.backend.dto;
 
+/**
+ * A basic response DTO (data-transfer-object) relaying a single message.
+ */
 public class MessageResponse {
     private String message;
 

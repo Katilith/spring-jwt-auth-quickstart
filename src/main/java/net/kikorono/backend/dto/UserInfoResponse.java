@@ -1,5 +1,9 @@
 package net.kikorono.backend.dto;
 
+/**
+ * A basic user information DTO (data-transfer-object).
+ * Contains a user ID, a username, and an email address.
+ */
 public class UserInfoResponse {
     private Long id;
     private String username;
