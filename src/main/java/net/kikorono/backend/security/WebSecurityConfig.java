@@ -15,11 +15,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/**
+ * Handles various security configurations, including the main
+ * application route filter chain that guards all desired routes
+ * behind a basic JWT authentication implementation.
+ */
 @Configuration
 @EnableGlobalMethodSecurity(
         // securedEnabled = true,
         // jsr250Enabled = true,
-        prePostEnabled = true)
+        prePostEnabled = true) // @todo replace deprecated decorator with newer implementation
 public class WebSecurityConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -52,18 +57,39 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * The main application route filter chain that guards all desired
+     * routes behind a basic JWT authentication implementation.
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // Disable cors and csrf for ease-of-use.
+        // These should be properly configured and enabled in a production server.
         http.cors().and().csrf().disable()
+                // Sets the authentication provider for the application.
                 .authenticationProvider(authenticationProvider())
+                // Adds the JWT authentication filter to the chain.
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                // Adds an exception handler to the chain.
                 .exceptionHandling()
+                // Sets the authentication entry point to the unauthorizedHandler,
+                // aka <b>AuthEntryPointJwt</b>.
                 .authenticationEntryPoint(unauthorizedHandler).and()
+                // Sets the session management policy to stateless.
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                // Authorizes HTTP requests and ensures that routes matching
+                // <b>/api/auth/**</b> are always accepted and do not require
+                // an authentication token.
                 .authorizeHttpRequests().requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
+                // Ensures that routes matching <b>/api/public/**</b> do not
+                // require an authentication token.
                 .requestMatchers(new AntPathRequestMatcher("/api/public/**")).permitAll()
+                // Ensures that any and all other routes in the application
+                // require a valid JWT authentication token to be provided.
                 .anyRequest().authenticated();
 
+        // Builds the actual filter so that the application can utilize it.
         return http.build();
     }
 }
